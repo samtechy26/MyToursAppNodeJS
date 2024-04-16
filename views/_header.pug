@@ -4,8 +4,18 @@ header.header
     .header__logo 
         img(src='/img/logo-white.png' alt='logo')
     nav.nav.nav--user 
-        //- a.nav__el(href='#') My bookings     
-        //-     img.nav__user(src='img/iser.jpg' alt='User photo')
-        //-     span Akan 
-        button.nav__el Login
+    if user
+        a.nav__el(href='#') Logout     
+            img.nav__user-img(src=`img/users/${user.photo}` alt=`Photo of ${user.name}`)
+            span= user.name.split(' ')[0]
+    else
+        a.nav__el(href='/login') Login
         button.nav__el.nav__el--cta Sign up
+
+
+    //- <nav class="nav nav--user">
+    //-     <a href="#" class="nav__el">My bookings</a>
+    //-     <a href="#" class="nav__el">
+    //-       <img src="img/user.jpg" alt="User photo" class="nav__user-img" />
+    //-       <span>Jonas</span>
+    //-     </a>

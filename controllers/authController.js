@@ -84,11 +84,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token: token,
-  });
+  createSendToken(user, 200, res);
 });
 
 /**
@@ -103,6 +99,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
   if (!token) {
     return next(
@@ -127,6 +125,31 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = freshUser;
+  next();
+});
+
+// only for rendered pages, no error
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+
+    const freshUser = await User.findById(decoded.id);
+
+    if (!freshUser) {
+      return next();
+    }
+
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    res.locals.user = freshUser;
+    return next();
+  }
+
   next();
 });
 
