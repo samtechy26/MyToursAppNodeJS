@@ -87,6 +87,16 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res, next) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    status: 'success',
+  });
+};
+
 /**
  * A simple express middleware function to check that the user is authenticated
  * by checking the authorization headers for the jwt token and decoding it to
@@ -125,33 +135,37 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = freshUser;
+  res.locals.user = freshUser;
   next();
 });
 
 // only for rendered pages, no error
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  if (req.cookies.jwt) {
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET,
-    );
+exports.isLoggedIn = async (req, res, next) => {
+  try {
+    if (req.cookies.jwt) {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
 
-    const freshUser = await User.findById(decoded.id);
+      const freshUser = await User.findById(decoded.id);
 
-    if (!freshUser) {
+      if (!freshUser) {
+        return next();
+      }
+
+      if (freshUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      res.locals.user = freshUser;
       return next();
     }
-
-    if (freshUser.changedPasswordAfter(decoded.iat)) {
-      return next();
-    }
-
-    res.locals.user = freshUser;
+  } catch (err) {
     return next();
   }
-
   next();
-});
+};
 
 /**
  * A function to return a middleware that checks if the user is authorized to visit a route
@@ -256,10 +270,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.updatePassword = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(req.user.id).select('+password');
 
-  const { prevPassword, password, passwordConfirm } = req.body;
+  const { passwordCurrent, password, passwordConfirm } = req.body;
 
   if (
-    !(await currentUser.correctPassword(prevPassword, currentUser.password))
+    !(await currentUser.correctPassword(passwordCurrent, currentUser.password))
   ) {
     return next(new AppError('Incorrect email or password', 401));
   }
@@ -269,9 +283,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   await currentUser.save();
 
-  const newToken = signToken(currentUser._id);
-  res.status(200).json({
-    status: 'success',
-    token: newToken,
-  });
+  createSendToken(currentUser, 200, res);
 });

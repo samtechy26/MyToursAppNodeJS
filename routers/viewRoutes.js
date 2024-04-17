@@ -22,12 +22,20 @@ router.use((req, res, next) => {
   next();
 });
 
-router.use(authController.isLoggedIn);
+// router.use(authController.isLoggedIn);
 
-router.get('/', viewController.getOverview);
+router.get('/', authController.isLoggedIn, viewController.getOverview);
 
-router.get('/login', viewController.login);
+router.get('/me', authController.protect, viewController.getAccount);
 
-router.get('/tour/:slug', viewController.getTour);
+router.get('/login', authController.isLoggedIn, viewController.login);
+
+router.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
+
+router.post(
+  '/submit-user-data',
+  authController.protect,
+  viewController.updateUserData,
+);
 
 module.exports = router;

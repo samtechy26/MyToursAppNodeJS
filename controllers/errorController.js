@@ -5,13 +5,21 @@ const AppError = require('../utils/appError');
  * @param {Error} err the received error
  * @param {Response} res response
  */
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
+const sendErrorDev = (err, req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else {
+    return res.status(err.statusCode).render('error', {
+      title: 'Error',
+      msg: err.message,
+      desc: 'oop! looks like we have a problem',
+    });
+  }
 };
 
 /**
@@ -92,11 +100,12 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   }
 
   if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+    error.message = err.message;
     if (error.name === 'CastError') {
       error = handleCastErrorDB(error);
     }

@@ -1,6 +1,7 @@
-const form = document.querySelector('.form');
+import axios from 'axios';
+import { showAlert } from './alert';
 
-const login = async (email, password) => {
+export const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -10,21 +11,30 @@ const login = async (email, password) => {
         password: password,
       },
     });
-    console.log(res);
 
     if (res.data.status === 'success') {
+      showAlert('success', 'Successfully logged in');
       window.setTimeout(() => {
         location.assign('/');
-      }, 1000);
+      }, 2000);
     }
   } catch (err) {
     console.log(err.response.data.message);
   }
 };
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  await login(email, password);
-});
+export const logout = async () => {
+  try {
+    const res = await axios({
+      method: 'GET',
+      url: 'http://127.0.0.1:8000/api/v1/users/logout'
+    })
+
+    if (res.data.status === 'success') {
+      location.reload(true)
+    }
+
+  } catch (err) {
+    showAlert('error', 'Error logging out! try again')
+  }
+}
