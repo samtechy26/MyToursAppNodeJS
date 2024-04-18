@@ -6138,9 +6138,8 @@ var runtime = (function (exports) {
           throw arg;
         }
 
-        // Be forgiving, per GeneratorResume behavior specified since ES2015:
-        // ES2015 spec, step 3: https://262.ecma-international.org/6.0/#sec-generatorresume
-        // Latest spec, step 2: https://tc39.es/ecma262/#sec-generatorresume
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
         return doneResult();
       }
 
@@ -6213,7 +6212,7 @@ var runtime = (function (exports) {
     var method = delegate.iterator[methodName];
     if (method === undefined) {
       // A .throw or .return when the delegate iterator has no .throw
-      // method, or a missing .next method, always terminate the
+      // method, or a missing .next mehtod, always terminate the
       // yield* loop.
       context.delegate = null;
 
@@ -6367,7 +6366,7 @@ var runtime = (function (exports) {
   };
 
   function values(iterable) {
-    if (iterable != null) {
+    if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) {
         return iteratorMethod.call(iterable);
@@ -6397,7 +6396,8 @@ var runtime = (function (exports) {
       }
     }
 
-    throw new TypeError(typeof iterable + " is not iterable");
+    // Return an iterator with no values.
+    return { next: doneResult };
   }
   exports.values = values;
 
@@ -7669,7 +7669,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],"../../node_modules/buffer/node_modules/isarray/index.js":[function(require,module,exports) {
+},{}],"../../node_modules/isarray/index.js":[function(require,module,exports) {
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
@@ -9469,7 +9469,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":"../../node_modules/base64-js/index.js","ieee754":"../../node_modules/ieee754/index.js","isarray":"../../node_modules/buffer/node_modules/isarray/index.js","buffer":"../../node_modules/buffer/index.js"}],"../../node_modules/axios/lib/helpers/toFormData.js":[function(require,module,exports) {
+},{"base64-js":"../../node_modules/base64-js/index.js","ieee754":"../../node_modules/ieee754/index.js","isarray":"../../node_modules/isarray/index.js","buffer":"../../node_modules/buffer/index.js"}],"../../node_modules/axios/lib/helpers/toFormData.js":[function(require,module,exports) {
 var Buffer = require("buffer").Buffer;
 'use strict';
 
@@ -12334,19 +12334,18 @@ if (form) {
 if (dataForm) {
   dataForm.addEventListener('submit', /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-      var name, email;
+      var form;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             e.preventDefault();
-            name = document.getElementById('name').value;
-            email = document.getElementById('email').value;
-            _context2.next = 5;
-            return (0, _updateSettings.updateUserSettings)({
-              name: name,
-              email: email
-            }, 'data');
-          case 5:
+            form = new FormData();
+            form.append('name', document.getElementById('name').value);
+            form.append('email', document.getElementById('email').value);
+            form.append('photo', document.getElementById('photo').files[0]);
+            _context2.next = 7;
+            return (0, _updateSettings.updateUserSettings)(form, 'data');
+          case 7:
           case "end":
             return _context2.stop();
         }
@@ -12417,7 +12416,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53650" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58644" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

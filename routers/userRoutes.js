@@ -1,4 +1,5 @@
 const express = require('express');
+
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
 
@@ -14,7 +15,12 @@ router.patch('/resetpassword/:token', authController.resetPassword);
 router.use(authController.protect);
 router.patch('/updatepassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateme', userController.updateMe);
+router.patch(
+  '/updateme',
+  userController.uploadUserPhoto,
+  userController.resizeUserPhoto,
+  userController.updateMe,
+);
 router.delete('/deleteme', userController.deleteMe);
 
 // restrict all routes from here to just admin users
