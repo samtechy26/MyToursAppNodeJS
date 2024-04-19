@@ -12,6 +12,7 @@ const tourRouter = require('./routers/tourRoutes');
 const userRouter = require('./routers/userRoutes');
 const reviewRouter = require('./routers/reviewRoutes');
 const viewRouter = require('./routers/viewRoutes');
+const bookingRouter = require('./routers/bookingRoutes');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -43,9 +44,8 @@ app.use('/api', limiter);
 
 // body parser middleware
 app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({extended: true, limit: '10kb'}))
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
-
 
 // Data Sanitization against nosql query injection
 app.use(mongoSanitize());
@@ -73,6 +73,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

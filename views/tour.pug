@@ -5,7 +5,7 @@ include _reviewCard
 block append head
     link(href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet')
     script(src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js')
-    //- script(src='/js/mapBox.js')
+    script(src='https://js.stripe.com/v3/')
             
 mixin overviewBox(label, text, icon)
     .overview-box__detail
@@ -85,5 +85,8 @@ block content
             .cta__content
                 h2.heading-secondary What are you waiting for?
                 p.cta__text 10 days. 1 adventure. Infinite memories. Make it yours today!
-                button.btn.btn--green.span-all-rows Book tour now!
+                if user
+                    button.btn.btn--green.span-all-rows.book(data-tour-id=`${tour.id}`) Book tour now!
+                else 
+                    button.btn.btn--green.span-all-rows Login to book tour!
     
