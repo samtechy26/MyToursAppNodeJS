@@ -1,5 +1,4 @@
 import '@babel/polyfill';
-
 import { login, logout } from './login';
 import { updateUserSettings } from './updateSettings';
 import { bookTour } from './stripe';

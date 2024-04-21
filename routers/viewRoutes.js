@@ -17,11 +17,6 @@ const POLICY =
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  res.setHeader(CSP, POLICY);
-  next();
-});
-
 // router.use(authController.isLoggedIn);
 
 router.get('/', authController.isLoggedIn, viewController.getOverview);
@@ -30,12 +25,17 @@ router.get('/me', authController.protect, viewController.getAccount);
 
 router.get('/login', authController.isLoggedIn, viewController.login);
 
-router.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
-
 router.post(
   '/submit-user-data',
   authController.protect,
   viewController.updateUserData,
 );
+
+router.use((req, res, next) => {
+  res.setHeader(CSP, POLICY);
+  next();
+});
+
+router.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
 
 module.exports = router;
