@@ -1,4 +1,5 @@
 import '@babel/polyfill';
+
 import { login, logout } from './login';
 import { displayMap } from './mapBox';
 import { updateUserSettings } from './updateSettings';
