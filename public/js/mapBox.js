@@ -1,4 +1,6 @@
-export const displayMap = (locations) => {
+const mapBox = document.getElementById('map');
+
+const displayMap = (locations) => {
   mapboxgl.accessToken =
     'pk.eyJ1Ijoic2FtbXl0ZWNoIiwiYSI6ImNsdjI0cndlMDA2Mm4ybG11aWVyaTFscGkifQ.IoxhkshOZ5BciTegyD-yhA';
   const map = new mapboxgl.Map({
@@ -47,3 +49,8 @@ export const displayMap = (locations) => {
     },
   });
 };
+
+if (mapBox) {
+  const locations = JSON.parse(mapBox.dataset.locations);
+  displayMap(locations);
+}
