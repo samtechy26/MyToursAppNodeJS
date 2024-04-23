@@ -14,6 +14,7 @@ const reviewRouter = require('./routers/reviewRoutes');
 const viewRouter = require('./routers/viewRoutes');
 const bookingRouter = require('./routers/bookingRoutes');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const app = express();
 
@@ -66,6 +67,9 @@ app.use(
     ],
   }),
 );
+
+// Compress the text responses
+app.use(compression);
 
 // ROUTES
 

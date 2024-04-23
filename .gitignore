@@ -1,5 +1,6 @@
 node_modules
 config
+dev-data
 .env
 .env.development.local
 .env.test.local
