@@ -15,6 +15,7 @@ const viewRouter = require('./routers/viewRoutes');
 const bookingRouter = require('./routers/bookingRoutes');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const app = express();
 
@@ -23,6 +24,9 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // GLOBAL MIDDLEWARES
+
+// Implementing CORS
+app.use(cors);
 
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
