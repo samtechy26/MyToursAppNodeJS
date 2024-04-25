@@ -26,7 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 // GLOBAL MIDDLEWARES
 
 // Implementing CORS
-app.use(cors);
+app.use(cors());
 
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -73,7 +73,7 @@ app.use(
 );
 
 // Compress the text responses
-app.use(compression);
+app.use(compression());
 
 // ROUTES
 
