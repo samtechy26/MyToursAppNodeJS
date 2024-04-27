@@ -32,7 +32,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set Secure HTTP Headers
-app.use(helmet());
+// app.use(helmet());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
